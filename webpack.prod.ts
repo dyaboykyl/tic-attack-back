@@ -10,57 +10,57 @@ import TerserPlugin from "terser-webpack-plugin";
 const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf-8"));
 
 module.exports = () => {
-    return {
-        mode: "production",
+  return {
+    mode: "production",
 
-        module: {
-            rules: [
-                {
-                    // test: /\.(js|jsx|ts|tsx)$/,
-                    test: /\.(ts|tsx)$/, //temp fix for imports in config.js
-                    use: [
-                        {
-                            loader: "babel-loader",
-                        },
-                    ],
-                    exclude: /node_modules/,
-                },
-                {
-                    test: /\.tsx?$/,
-                    use: "ts-loader",
-                    exclude: /node_modules/,
-                },
-            ],
+    module: {
+      rules: [
+        {
+          // test: /\.(js|jsx|ts|tsx)$/,
+          test: /\.(ts|tsx)$/, //temp fix for imports in config.js
+          use: [
+            {
+              loader: "babel-loader",
+            },
+          ],
+          exclude: /node_modules/,
         },
-
-        output: {
-            path: path.resolve(__dirname, "dist"),
-            filename: "game.[contenthash].js",
+        {
+          test: /\.tsx?$/,
+          use: "ts-loader",
+          exclude: /node_modules/,
         },
+      ],
+    },
 
-        optimization: {
-            minimize: true,
-            minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
-        },
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "game.[contenthash].js",
+    },
 
-        plugins: [
-            new MiniCssExtractPlugin({
-                filename: "[name].[contenthash].css",
-            }),
+    optimization: {
+      minimize: true,
+      minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
+    },
 
-            new webpack.DefinePlugin({
-                VERSION: JSON.stringify(pkg.version + "-r"),
-            }),
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: "[name].[contenthash].css",
+      }),
 
-            new ESLintPlugin({
-                extensions: ["js", "jsx", "ts", "tsx"],
-                emitError: true,
-                emitWarning: true,
-                failOnError: true,
-                failOnWarning: true,
-            }),
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(pkg.version + "-r"),
+      }),
 
-            new webpack.ProgressPlugin(),
-        ],
-    };
+      new ESLintPlugin({
+        extensions: ["js", "jsx", "ts", "tsx"],
+        emitError: true,
+        emitWarning: true,
+        failOnError: true,
+        failOnWarning: true,
+      }),
+
+      new webpack.ProgressPlugin(),
+    ],
+  };
 };
