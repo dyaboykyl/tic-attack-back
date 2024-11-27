@@ -103,16 +103,17 @@ class _GameScreenState extends State<GameScreen> {
       child: Container(
         color: Colors.transparent,
         width: squareWidth,
-        child: Observer(builder: (context) => marker(store.markers[pos])),
+        child:
+            Observer(builder: (context) => marker(store.markers[pos], store.getMarkerColor(pos))),
       ),
     );
   }
 
-  Widget marker(Marker marker) {
+  Widget marker(Marker marker, Color color) {
     return Center(
       child: Text(
         marker.getText(),
-        style: TextStyle(fontSize: squareWidth, height: 1),
+        style: TextStyle(fontSize: squareWidth, height: 1, color: color),
       ),
     );
   }
