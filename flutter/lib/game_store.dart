@@ -88,6 +88,8 @@ abstract class _GameStoreBase with Store {
   GameState gameState = GameState.OVER;
   @observable
   int? hoveredPos;
+  @observable
+  Future? evaluationDelay;
 
   Color getMarkerColor(int pos) {
     if (winningCombination?.contains(pos) ?? false) {
@@ -141,6 +143,7 @@ abstract class _GameStoreBase with Store {
     playerMove = null;
     botMove = null;
     gameState = GameState.WAITING_FOR_MOVE;
+    evaluationDelay = null;
     for (var i = 0; i < 9; i++) {
       markers.add(Marker.EMPTY);
     }
@@ -160,7 +163,7 @@ abstract class _GameStoreBase with Store {
 
   @action
   onMarkerTapped(int pos) async {
-    if (gameState != GameState.WAITING_FOR_MOVE) {
+    if (gameState != GameState.WAITING_FOR_MOVE || evaluationDelay != null) {
       return;
     }
 
@@ -186,7 +189,12 @@ abstract class _GameStoreBase with Store {
       final attackMove = playerTurn ? playerMove : botMove;
       markers[attackMove!] = playerTurn ? playerMarker : bot.marker;
     }
-    await Future.delayed(waitTime);
+    evaluationDelay = Future.delayed(waitTime);
+    await evaluationDelay;
+    evaluationDelay = null;
+    if (gameState != GameState.EVALUATING) {
+      return;
+    }
 
     playerMove = null;
     botMove = null;

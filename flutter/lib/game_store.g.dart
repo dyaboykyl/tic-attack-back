@@ -134,6 +134,22 @@ mixin _$GameStore on _GameStoreBase, Store {
     });
   }
 
+  late final _$evaluationDelayAtom =
+      Atom(name: '_GameStoreBase.evaluationDelay', context: context);
+
+  @override
+  Future<dynamic>? get evaluationDelay {
+    _$evaluationDelayAtom.reportRead();
+    return super.evaluationDelay;
+  }
+
+  @override
+  set evaluationDelay(Future<dynamic>? value) {
+    _$evaluationDelayAtom.reportWrite(value, super.evaluationDelay, () {
+      super.evaluationDelay = value;
+    });
+  }
+
   late final _$onMarkerTappedAsyncAction =
       AsyncAction('_GameStoreBase.onMarkerTapped', context: context);
 
@@ -217,6 +233,7 @@ playerMove: ${playerMove},
 botMove: ${botMove},
 gameState: ${gameState},
 hoveredPos: ${hoveredPos},
+evaluationDelay: ${evaluationDelay},
 playerTurn: ${playerTurn},
 winningPlayer: ${winningPlayer},
 defender: ${defender},
