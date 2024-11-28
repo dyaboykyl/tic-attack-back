@@ -16,7 +16,7 @@ class _GameScreenState extends State<GameScreen> {
 
   double get width {
     final size = MediaQuery.of(context).size;
-    return min(size.width, size.height) * .8;
+    return min(size.width * .8, size.height * .7);
   }
 
   double get height => width;
@@ -38,10 +38,13 @@ class _GameScreenState extends State<GameScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // const SizedBox(height: 20),
               board(),
-              const SizedBox(height: 20),
+              // const SizedBox(height: 20),
+              actionText(),
+              // const SizedBox(height: 10),
               newGameButton(),
             ],
           ),
@@ -98,24 +101,49 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget markerSquare(pos) {
-    return GestureDetector(
-      onTap: () => store.onMarkerTapped(pos),
-      child: Container(
-        color: Colors.transparent,
-        width: squareWidth,
-        child:
-            Observer(builder: (context) => marker(store.markers[pos], store.getMarkerColor(pos))),
+    return Container(
+      width: squareWidth,
+      padding: EdgeInsets.all(squareWidth * .05),
+      child: GestureDetector(
+        onTap: () => store.onMarkerTapped(pos),
+        child: MouseRegion(
+          onEnter: (e) => store.onHoverSquare(pos),
+          onExit: (e) => store.onUnhoverSquare(pos),
+          child: Observer(
+            builder: (context) => Container(
+                color: store.getHoverColor(pos),
+                child: Stack(
+                  children: [
+                    marker(store.markers[pos], store.getMarkerColor(pos)),
+                    markerPreview(pos),
+                  ],
+                )),
+          ),
+        ),
       ),
     );
+  }
+
+  Widget markerPreview(int pos) {
+    return Observer(builder: (c) => marker(playerMarker, store.getHoverMarkerColor(pos)));
   }
 
   Widget marker(Marker marker, Color color) {
     return Center(
       child: Text(
-        marker.getText(),
+        marker.text,
         style: TextStyle(fontSize: squareWidth, height: 1, color: color),
       ),
     );
+  }
+
+  Widget actionText() {
+    return Center(
+        child: Observer(
+            builder: (c) => Text(
+                  store.actionText,
+                  style: TextStyle(fontSize: squareWidth / 3, color: Colors.black),
+                )));
   }
 
   Widget newGameButton() {
